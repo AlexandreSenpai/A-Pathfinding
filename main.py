@@ -9,17 +9,17 @@ from node import Node
 pygame.init()
 
 # Tamanho da tela e das células
-grid = Grid(width=10,
-            height=10)
+grid = Grid(width=100,
+            height=100)
 grid.make()
-cell_size = 100
+cell_size = 15
 screen_w = grid.width * cell_size 
 screen_h = grid.height * cell_size 
 screen = pygame.display.set_mode((screen_w, screen_h))
 
 finder = AStar(grid=grid)
 
-start_node = grid.get_node_at(5, 5)
+start_node = grid.get_node_at(0, 0)
 end_node = grid.get_node_at(5, 4)
 
 path = []
@@ -60,7 +60,7 @@ while running:
     screen.fill(white)
     
     if start_node is not None and end_node is not None and found == False:
-        path = finder.find(start_node=start_node, end_node=end_node)
+        path, processed, not_processed = finder.find(start_node=start_node, end_node=end_node)
         found = True
 
     for x in range(grid.width):
@@ -71,11 +71,13 @@ while running:
             if node is None: continue
 
             if path:
-                selected_color = yellow if node in path[2] else blue
-                selected_color = blue if node in path[1] else selected_color
-                selected_color = green if node in path[0] else selected_color
+                selected_color = yellow if node in not_processed else white
+                selected_color = blue if node in processed else selected_color
+                selected_color = green if node in path else selected_color
             else:
                 selected_color = white
+
+            selected_color = black if not node.walkable else selected_color
 
             rect = GridNode(x * cell_size, 
                             y * cell_size, 
@@ -86,14 +88,14 @@ while running:
             pygame.draw.rect(screen, selected_color, rect, 0)
             pygame.draw.rect(screen, black, rect, 1)  # Contorno
 
-            f_text = font.render(f'F={node.F}', True, black)
-            g_text = font2.render(f'G={node.G}', True, black)
-            h_text = font2.render(f'H={node.H}', True, black)
+            # f_text = font.render(f'F={node.F}', True, black)
+            # g_text = font2.render(f'G={node.G}', True, black)
+            # h_text = font2.render(f'H={node.H}', True, black)
 
 
-            screen.blit(f_text, (node.x * cell_size + ((cell_size / 2) - 20), node.y * cell_size + ((cell_size / 2) - 10)))
-            screen.blit(g_text, (node.x * cell_size + 8, node.y * cell_size + 10))
-            screen.blit(h_text, (node.x * cell_size + ((cell_size / 2) + 10), node.y * cell_size + 10))
+            # screen.blit(f_text, (node.x * cell_size + ((cell_size / 2) - 20), node.y * cell_size + ((cell_size / 2) - 10)))
+            # screen.blit(g_text, (node.x * cell_size + 8, node.y * cell_size + 10))
+            # screen.blit(h_text, (node.x * cell_size + ((cell_size / 2) + 10), node.y * cell_size + 10))
 
             if rect.is_mouse_over():
                 hovering_node = rect.node

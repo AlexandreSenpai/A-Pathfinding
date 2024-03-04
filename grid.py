@@ -1,4 +1,5 @@
 import enum
+import random
 from node import Node
 
 
@@ -14,7 +15,13 @@ class Grid:
         for x in range(self.width):
             y_line = []
             for y in range(self.height):
-                y_line.append(Node(x=x, y=y))
+                node = Node(x=x, y=y)
+                chance = random.random()
+
+                if chance <= .25:
+                    node.walkable = False
+
+                y_line.append(node)
 
             self.__matrix.append(y_line)
 

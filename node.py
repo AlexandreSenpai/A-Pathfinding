@@ -30,7 +30,6 @@ class Node:
     
     def reset(self) -> None:
         self.has_been_processed: bool = False
-        self.walkable: bool = True
         self.parent = None
 
         self.__f = 0
